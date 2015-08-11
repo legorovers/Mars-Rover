@@ -12,7 +12,38 @@ public abstract class BluetoothRobot implements Runnable
 {	
 	public enum ConnectStatus {CONNECTED, DISCONNECTED, CONNECTING, DISCONNECTING}
 	
-	public enum BeliefStates {WATER, OBSTACLE, PATH}
+	public enum BeliefStates
+	{
+		OBSTACLE(0),
+		WATER(1),
+		PATH(2);
+
+		static BeliefStates[] a = BeliefStates.values();
+
+		int value;
+		BeliefStates(int i)
+		{
+			value = i;
+		}
+
+		public int toInt()
+		{
+			return value;
+		}
+
+		public static BeliefStates fromInt(int i)
+		{
+			for (int j = 0; j < a.length; j++)
+			{
+				if (a[j].toInt() == i)
+				{
+					return a[j];
+				}
+			}
+			return OBSTACLE;
+		}
+
+	}
 
 	public enum RobotMode {MANUAL, AVOID, WATER, LINE}
 
@@ -104,18 +135,21 @@ public abstract class BluetoothRobot implements Runnable
 	public static class RobotRule
 	{
 		private boolean on;
+		private BeliefStates type;
 		private RobotAction[] actions;
 		private int onAppeared;
 
 		public RobotRule()
 		{
 			on = false;
+			type = BeliefStates.OBSTACLE;
 			onAppeared = 0;
 			actions = new RobotAction[]{RobotAction.NOTHING, RobotAction.NOTHING, RobotAction.NOTHING};
 		}
 		
-		public RobotRule(boolean _on, int appeared, RobotAction action1, RobotAction action2, RobotAction action3)
+		public RobotRule(boolean _on, BeliefStates _type, int appeared, RobotAction action1, RobotAction action2, RobotAction action3)
 		{
+			type = _type;
 			on = _on;
 			onAppeared = appeared;
 			actions = new RobotAction[]{action1, action2, action3};
@@ -135,6 +169,11 @@ public abstract class BluetoothRobot implements Runnable
 		{
 			return actions[pos];
 		}
+
+		public BeliefStates getType()
+		{
+			return type;
+		}
 	}
 
     private Robot robot;
@@ -149,8 +188,8 @@ public abstract class BluetoothRobot implements Runnable
 	
 	private BeliefSet state;
 	private boolean obstacleChanged;
-	//private boolean pathChanged;
-	//private boolean waterChanged;
+	private boolean pathChanged;
+	private boolean waterChanged;
 	private boolean pathFound;
 
 	private float objectDetected = 0.4f;
@@ -186,7 +225,7 @@ public abstract class BluetoothRobot implements Runnable
 		int green = colour.getGreen();
 
 		//pathChanged = state.states.contains(BeliefStates.PATH) != (Float.compare(light, pathLight) < 0);
-		//boolean curPath = state.states.contains(BeliefStates.PATH);
+		boolean curPath = state.states.contains(BeliefStates.PATH);
 		if ((red < blackMax) && (blue < blackMax) && (green < blackMax))
 		{
 			if (!state.states.contains(BeliefStates.PATH))
@@ -201,10 +240,10 @@ public abstract class BluetoothRobot implements Runnable
 				state.states.remove(BeliefStates.PATH);
 			}
 		}
-		//pathChanged = curPath != state.states.contains(BeliefStates.PATH);
+		pathChanged = curPath != state.states.contains(BeliefStates.PATH);
 
 		//waterChanged = state.states.contains(BeliefStates.WATER) != ((Float.compare(light, waterLightRange.x) > 0) && (Float.compare(light, waterLightRange.y) < 0));
-		//boolean curWater = state.states.contains(BeliefStates.WATER);
+		boolean curWater = state.states.contains(BeliefStates.WATER);
 		if (((blue > green) && (blue > red)) && ((red < waterMax) && (blue < waterMax) && (green < waterMax)))
 		{
 			if (!state.states.contains(BeliefStates.WATER))
@@ -219,7 +258,7 @@ public abstract class BluetoothRobot implements Runnable
 				state.states.remove(BeliefStates.WATER);
 			}
 		}
-		//waterChanged = curWater != state.states.contains(BeliefStates.WATER);
+		waterChanged = curWater != state.states.contains(BeliefStates.WATER);
 	}
 
 	private void checkRules()
@@ -230,13 +269,17 @@ public abstract class BluetoothRobot implements Runnable
 			boolean doActions = false;
 			if (rule.getEnabled())
 			{
-				switch (rule.getOnAppeared())
+				boolean onAppeared = (rule.getOnAppeared() == 0);
+				switch (rule.getType())
 				{
-					case 0:
-						doActions = obstacleChanged && state.states.contains(BeliefStates.OBSTACLE);
+					case WATER:
+						doActions = waterChanged && (onAppeared == state.states.contains(BeliefStates.WATER));
 						break;
-					case 1:
-						doActions = obstacleChanged && !state.states.contains(BeliefStates.OBSTACLE);
+					case OBSTACLE:
+						doActions = obstacleChanged && (onAppeared == state.states.contains(BeliefStates.OBSTACLE));
+						break;
+					case PATH:
+						doActions = pathChanged && (onAppeared == state.states.contains(BeliefStates.OBSTACLE));
 						break;
 				}
 				if (doActions)
@@ -459,6 +502,7 @@ public abstract class BluetoothRobot implements Runnable
 		actions = new LinkedBlockingDeque<TimedAction>();
 
 		rules = new RobotRule[]{
+				new RobotRule(),
 				new RobotRule(),
 				new RobotRule(),
 				new RobotRule()

@@ -36,12 +36,12 @@ public class RuleActionItem
 		return new RuleActionItem[]{new RuleActionItem("Nothing", RobotAction.NOTHING, num),
 									new RuleActionItem("Forward", RobotAction.FORWARD, num),
 									new RuleActionItem("Forward a bit", RobotAction.FORWARD_A_BIT, num),
-									new RuleActionItem("Backwards", RobotAction.BACKWARD, num),
-									new RuleActionItem("Backwards a bit", RobotAction.BACK_A_BIT, num),
+									new RuleActionItem("Reverse", RobotAction.BACKWARD, num),
+									new RuleActionItem("Reverse a bit", RobotAction.BACK_A_BIT, num),
 									new RuleActionItem("Left", RobotAction.LEFT, num),
-									new RuleActionItem("Left a bit", RobotAction.LEFT_A_BIT, num),
+									new RuleActionItem("Left 90°", RobotAction.LEFT_A_BIT, num),
 									new RuleActionItem("Right", RobotAction.RIGHT, num),
-									new RuleActionItem("Right a bit", RobotAction.RIGHT_A_BIT, num),
+									new RuleActionItem("Right 90°", RobotAction.RIGHT_A_BIT, num),
 									new RuleActionItem("Stop", RobotAction.STOP, num)};
 	}
 	

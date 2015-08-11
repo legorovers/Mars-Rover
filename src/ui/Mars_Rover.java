@@ -38,6 +38,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JCheckBox;
 
 import ev3.BluetoothRobot;
+import ev3.BluetoothRobot.BeliefStates;
 import ev3.BluetoothRobot.ConnectStatus;
 import ev3.BluetoothRobot.RobotAction;
 import ev3.BluetoothRobot.RobotMode;
@@ -82,6 +83,15 @@ public class Mars_Rover
 		}
 	}
 	
+	class BeliefItemChanged implements ItemListener
+	{
+		@Override
+		public void itemStateChanged(ItemEvent e) 
+		{
+			changeRule(((BeliefItem)e.getItem()).getRuleNo());
+		}
+	}
+	
 	class RuleChkChanged implements ChangeListener
 	{
 		private int ruleNo;
@@ -107,6 +117,7 @@ public class Mars_Rover
 			JOptionPane.showMessageDialog(frmMarsRover, "Settings Changed", "Mars Rover", JOptionPane.INFORMATION_MESSAGE, new ImageIcon(imgIcon.getScaledInstance(50, 50, Image.SCALE_SMOOTH)));
 		}
 	}
+
 	
 	private JFrame frmMarsRover;
 	private BufferedImage imgIcon;
@@ -134,21 +145,31 @@ public class Mars_Rover
 	
 	private JCheckBox chkR1;
 	private JComboBox<RuleActionItem> cboR1Obs;
+	private JComboBox<BeliefItem> cboR1Type;
 	private JComboBox<RuleActionItem> cboR1A1;
 	private JComboBox<RuleActionItem> cboR1A2;
 	private JComboBox<RuleActionItem> cboR1A3;
 	
 	private JCheckBox chkR2;
 	private JComboBox<RuleActionItem> cboR2Obs;
+	private JComboBox<BeliefItem> cboR2Type;
 	private JComboBox<RuleActionItem> cboR2A1;
 	private JComboBox<RuleActionItem> cboR2A2;
 	private JComboBox<RuleActionItem> cboR2A3;
 	
 	private JCheckBox chkR3;
 	private JComboBox<RuleActionItem> cboR3Obs;
+	private JComboBox<BeliefItem> cboR3Type;
 	private JComboBox<RuleActionItem> cboR3A1;
 	private JComboBox<RuleActionItem> cboR3A2;
 	private JComboBox<RuleActionItem> cboR3A3;
+	
+	private JCheckBox chkR4;
+	private JComboBox<RuleActionItem> cboR4Obs;
+	private JComboBox<BeliefItem> cboR4Type;
+	private JComboBox<RuleActionItem> cboR4A1;
+	private JComboBox<RuleActionItem> cboR4A2;
+	private JComboBox<RuleActionItem> cboR4A3;
 	
 	private JButton btnTask;
 	private ButtonGroup rdbTaskGroup;
@@ -160,6 +181,16 @@ public class Mars_Rover
 	private JSpinner spnPath;
 	private JSpinner spnWater;
 	private JButton btnSettings;
+	
+	private JButton btnForward;
+	private JButton btnFABit;
+	private JButton btnLeft;
+	private JButton btnLABit;
+	private JButton btnStop;
+	private JButton btnRABit;
+	private JButton btnBABit;
+	private JButton btnBack;
+	private JButton btnRight;
 	
 	/**
 	 * Launch the application.
@@ -192,11 +223,13 @@ public class Mars_Rover
 		RobotAction a1 = null;
 		RobotAction a2 = null;
 		RobotAction a3 = null;
+		BeliefStates b = null;
 		switch (ruleNo)
 		{
 			case 1:
 				checked = chkR1.isSelected();
 				obs = cboR1Obs.getSelectedIndex();
+				b = ((BeliefItem)cboR1Type.getSelectedItem()).getBelief();
 				a1 = ((RuleActionItem)cboR1A1.getSelectedItem()).getAction();
 				a2 = ((RuleActionItem)cboR1A2.getSelectedItem()).getAction();
 				a3 = ((RuleActionItem)cboR1A3.getSelectedItem()).getAction();
@@ -204,6 +237,7 @@ public class Mars_Rover
 			case 2:
 				checked = chkR2.isSelected();
 				obs = cboR2Obs.getSelectedIndex();
+				b = ((BeliefItem)cboR2Type.getSelectedItem()).getBelief();
 				a1 = ((RuleActionItem)cboR2A1.getSelectedItem()).getAction();
 				a2 = ((RuleActionItem)cboR2A2.getSelectedItem()).getAction();
 				a3 = ((RuleActionItem)cboR2A3.getSelectedItem()).getAction();
@@ -211,12 +245,21 @@ public class Mars_Rover
 			case 3:
 				checked = chkR3.isSelected();
 				obs = cboR3Obs.getSelectedIndex();
+				b = ((BeliefItem)cboR3Type.getSelectedItem()).getBelief();
 				a1 = ((RuleActionItem)cboR3A1.getSelectedItem()).getAction();
 				a2 = ((RuleActionItem)cboR3A2.getSelectedItem()).getAction();
 				a3 = ((RuleActionItem)cboR3A3.getSelectedItem()).getAction();
 				break;
+			case 4:
+				checked = chkR4.isSelected();
+				obs = cboR4Obs.getSelectedIndex();
+				b = ((BeliefItem)cboR4Type.getSelectedItem()).getBelief();
+				a1 = ((RuleActionItem)cboR4A1.getSelectedItem()).getAction();
+				a2 = ((RuleActionItem)cboR4A2.getSelectedItem()).getAction();
+				a3 = ((RuleActionItem)cboR4A3.getSelectedItem()).getAction();
+				break;
 		}
-		RobotRule r = new RobotRule(checked, obs, a1, a2, a3);
+		RobotRule r = new RobotRule(checked, b, obs, a1, a2, a3);
 		btRobot.changedRule(ruleNo - 1, r);
 	}
 
@@ -342,21 +385,31 @@ public class Mars_Rover
 		
 		chkR1.addChangeListener(new RuleChkChanged(1));
 		cboR1Obs.addItemListener(new RuleActionChanged());
+		cboR1Type.addItemListener(new BeliefItemChanged());
 		cboR1A1.addItemListener(new RuleActionChanged());
 		cboR1A2.addItemListener(new RuleActionChanged());
 		cboR1A3.addItemListener(new RuleActionChanged());
 		
 		chkR2.addChangeListener(new RuleChkChanged(2));
 		cboR2Obs.addItemListener(new RuleActionChanged());
+		cboR2Type.addItemListener(new BeliefItemChanged());
 		cboR2A1.addItemListener(new RuleActionChanged());
 		cboR2A2.addItemListener(new RuleActionChanged());
 		cboR2A3.addItemListener(new RuleActionChanged());
 		
 		chkR3.addChangeListener(new RuleChkChanged(3));
 		cboR3Obs.addItemListener(new RuleActionChanged());
+		cboR3Type.addItemListener(new BeliefItemChanged());
 		cboR3A1.addItemListener(new RuleActionChanged());
 		cboR3A2.addItemListener(new RuleActionChanged());
 		cboR3A3.addItemListener(new RuleActionChanged());
+		
+		chkR4.addChangeListener(new RuleChkChanged(4));
+		cboR4Obs.addItemListener(new RuleActionChanged());
+		cboR4Type.addItemListener(new BeliefItemChanged());
+		cboR4A1.addItemListener(new RuleActionChanged());
+		cboR4A2.addItemListener(new RuleActionChanged());
+		cboR4A3.addItemListener(new RuleActionChanged());
 		
 		cboDelay.addItemListener(new ItemListener()
 		{
@@ -478,44 +531,48 @@ public class Mars_Rover
 		gbl_panel_5.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
 		panel_5.setLayout(gbl_panel_5);
 		
-		JButton btnFoward = new JButton("\u25b2\u25b2");
-		btnFoward.addActionListener(new ActionButton(RobotAction.FORWARD));
-		btnFoward.setPreferredSize(dimCmdNav);
+		btnForward = new JButton("\u25b2\u25b2");
+		btnForward.addActionListener(new ActionButton(RobotAction.FORWARD));
+		btnForward.setPreferredSize(dimCmdNav);
+		btnForward.setToolTipText("Go forward until stop pressed");
 		GridBagConstraints gbc_btnFoward = new GridBagConstraints();
 		gbc_btnFoward.insets = new Insets(0, 0, 5, 5);
 		gbc_btnFoward.gridx = 2;
 		gbc_btnFoward.gridy = 0;
-		panel_5.add(btnFoward, gbc_btnFoward);
+		panel_5.add(btnForward, gbc_btnFoward);
 		
 		
-		JButton btnFABit = new JButton("\u25b2");
+		btnFABit = new JButton("\u25b2");
 		btnFABit.addActionListener(new ActionButton(RobotAction.FORWARD_A_BIT));
 		btnFABit.setPreferredSize(dimCmdNav);
+		btnFABit.setToolTipText("Go forward slightly");
 		GridBagConstraints gbc_btnFABit = new GridBagConstraints();
 		gbc_btnFABit.insets = new Insets(0, 0, 5, 5);
 		gbc_btnFABit.gridx = 2;
 		gbc_btnFABit.gridy = 1;
 		panel_5.add(btnFABit, gbc_btnFABit);
 		
-		JButton btnLeft = new JButton("\u25c0\u25c0");
+		btnLeft = new JButton("\u25c0\u25c0");
 		btnLeft.addActionListener(new ActionButton(RobotAction.LEFT));
 		btnLeft.setPreferredSize(dimCmdNav);
+		btnLeft.setToolTipText("Turn left until stop pressed");
 		GridBagConstraints gbc_btnLeft = new GridBagConstraints();
 		gbc_btnLeft.insets = new Insets(0, 0, 5, 5);
 		gbc_btnLeft.gridx = 0;
 		gbc_btnLeft.gridy = 2;
 		panel_5.add(btnLeft, gbc_btnLeft);
 		
-		JButton btnLABit = new JButton("\u25c0");
+		btnLABit = new JButton("\u25c0");
 		btnLABit.addActionListener(new ActionButton(RobotAction.LEFT_A_BIT));
 		btnLABit.setPreferredSize(dimCmdNav);
+		btnLABit.setToolTipText("Left 90°");
 		GridBagConstraints gbc_btnLABit = new GridBagConstraints();
 		gbc_btnLABit.insets = new Insets(0, 0, 5, 5);
 		gbc_btnLABit.gridx = 1;
 		gbc_btnLABit.gridy = 2;
 		panel_5.add(btnLABit, gbc_btnLABit);
 		
-		JButton btnStop = new JButton("Stop");
+		btnStop = new JButton("Stop");
 		btnStop.addActionListener(new ActionButton(RobotAction.STOP));
 		btnStop.setPreferredSize(dimCmdNav);
 		GridBagConstraints gbc_btnStop = new GridBagConstraints();
@@ -524,36 +581,40 @@ public class Mars_Rover
 		gbc_btnStop.gridy = 2;
 		panel_5.add(btnStop, gbc_btnStop);
 		
-		JButton btnRABit = new JButton("\u25b6");
+		btnRABit = new JButton("\u25b6");
 		btnRABit.addActionListener(new ActionButton(RobotAction.RIGHT_A_BIT));
 		btnRABit.setPreferredSize(dimCmdNav);
+		btnRABit.setToolTipText("Right 90°");
 		GridBagConstraints gbc_btnRABit = new GridBagConstraints();
 		gbc_btnRABit.insets = new Insets(0, 0, 5, 5);
 		gbc_btnRABit.gridx = 3;
 		gbc_btnRABit.gridy = 2;
 		panel_5.add(btnRABit, gbc_btnRABit);
 		
-		JButton btnBABit = new JButton("\u25bc");
+		btnBABit = new JButton("\u25bc");
 		btnBABit.addActionListener(new ActionButton(RobotAction.BACK_A_BIT));
 		btnBABit.setPreferredSize(dimCmdNav);
+		btnBABit.setToolTipText("Reverse a bit");
 		GridBagConstraints gbc_btnBABit = new GridBagConstraints();
 		gbc_btnBABit.insets = new Insets(0, 0, 5, 5);
 		gbc_btnBABit.gridx = 2;
 		gbc_btnBABit.gridy = 3;
 		panel_5.add(btnBABit, gbc_btnBABit);
 		
-		JButton btnBack = new JButton("\u25bc\u25bc");
+		btnBack = new JButton("\u25bc\u25bc");
 		btnBack.addActionListener(new ActionButton(RobotAction.BACKWARD));
 		btnBack.setPreferredSize(dimCmdNav);
+		btnBack.setToolTipText("Reverse until stop pressed");
 		GridBagConstraints gbc_btnBack = new GridBagConstraints();
 		gbc_btnBack.insets = new Insets(0, 0, 5, 5);
 		gbc_btnBack.gridx = 2;
 		gbc_btnBack.gridy = 4;
 		panel_5.add(btnBack, gbc_btnBack);
 		
-		JButton btnRight = new JButton("\u25b6\u25b6");
+		btnRight = new JButton("\u25b6\u25b6");
 		btnRight.addActionListener(new ActionButton(RobotAction.RIGHT));
 		btnRight.setPreferredSize(dimCmdNav);
+		btnRight.setToolTipText("Turn right until stop pressed");
 		GridBagConstraints gbc_btnRight = new GridBagConstraints();
 		gbc_btnRight.insets = new Insets(0, 0, 5, 5);
 		gbc_btnRight.gridx = 4;
@@ -617,284 +678,37 @@ public class Mars_Rover
 		gbc_tabbedPane_1.gridy = 2;
 		pnlRules.add(tabbedPane_1, gbc_tabbedPane_1);
 		
-		JPanel panel_6 = new JPanel();
-		panel_6.setBackground(new Color(220, 220, 220));
-		tabbedPane_1.addTab("Rule 1", null, panel_6, null);
-		GridBagLayout gbl_panel_6 = new GridBagLayout();
-		gbl_panel_6.columnWidths = new int[]{128, 128, 0};
-		gbl_panel_6.rowHeights = new int[]{27, 0, 0, 0, 0, 0};
-		gbl_panel_6.columnWeights = new double[]{1.0, 1.0, Double.MIN_VALUE};
-		gbl_panel_6.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
-		panel_6.setLayout(gbl_panel_6);
-		
-		JLabel lblEnabled = new JLabel("Do rule");
-		GridBagConstraints gbc_lblEnabled = new GridBagConstraints();
-		gbc_lblEnabled.anchor = GridBagConstraints.EAST;
-		gbc_lblEnabled.insets = new Insets(0, 0, 5, 5);
-		gbc_lblEnabled.gridx = 0;
-		gbc_lblEnabled.gridy = 0;
-		panel_6.add(lblEnabled, gbc_lblEnabled);
-		
 		chkR1 = new JCheckBox("");
-		GridBagConstraints gbc_chkR1 = new GridBagConstraints();
-		gbc_chkR1.fill = GridBagConstraints.BOTH;
-		gbc_chkR1.insets = new Insets(0, 0, 5, 0);
-		gbc_chkR1.gridx = 1;
-		gbc_chkR1.gridy = 0;
-		panel_6.add(chkR1, gbc_chkR1);
-		
-		JLabel lblNewLabel_6 = new JLabel("If an obstacle has");
-		GridBagConstraints gbc_lblNewLabel_6 = new GridBagConstraints();
-		gbc_lblNewLabel_6.insets = new Insets(0, 0, 5, 5);
-		gbc_lblNewLabel_6.anchor = GridBagConstraints.EAST;
-		gbc_lblNewLabel_6.gridx = 0;
-		gbc_lblNewLabel_6.gridy = 1;
-		panel_6.add(lblNewLabel_6, gbc_lblNewLabel_6);
-		
-		JLabel lblNewLabel_7 = new JLabel("then do");
-		GridBagConstraints gbc_lblNewLabel_7 = new GridBagConstraints();
-		gbc_lblNewLabel_7.insets = new Insets(0, 0, 5, 5);
-		gbc_lblNewLabel_7.anchor = GridBagConstraints.EAST;
-		gbc_lblNewLabel_7.gridx = 0;
-		gbc_lblNewLabel_7.gridy = 2;
-		panel_6.add(lblNewLabel_7, gbc_lblNewLabel_7);
-		
-		JLabel lblNewLabel_8 = new JLabel("then");
-		GridBagConstraints gbc_lblNewLabel_8 = new GridBagConstraints();
-		gbc_lblNewLabel_8.insets = new Insets(0, 0, 5, 5);
-		gbc_lblNewLabel_8.anchor = GridBagConstraints.EAST;
-		gbc_lblNewLabel_8.gridx = 0;
-		gbc_lblNewLabel_8.gridy = 3;
-		panel_6.add(lblNewLabel_8, gbc_lblNewLabel_8);
-		
-		JLabel lblNewLabel_9 = new JLabel("then");
-		GridBagConstraints gbc_lblNewLabel_9 = new GridBagConstraints();
-		gbc_lblNewLabel_9.insets = new Insets(0, 0, 0, 5);
-		gbc_lblNewLabel_9.anchor = GridBagConstraints.EAST;
-		gbc_lblNewLabel_9.gridx = 0;
-		gbc_lblNewLabel_9.gridy = 4;
-		panel_6.add(lblNewLabel_9, gbc_lblNewLabel_9);
-		
-		cboR1A3 = new JComboBox<RuleActionItem>();
-		cboR1A3.setModel(new DefaultComboBoxModel<RuleActionItem>(RuleActionItem.getActions(1)));
-		GridBagConstraints gbc_cboR1A3 = new GridBagConstraints();
-		gbc_cboR1A3.fill = GridBagConstraints.HORIZONTAL;
-		gbc_cboR1A3.gridx = 1;
-		gbc_cboR1A3.gridy = 4;
-		panel_6.add(cboR1A3, gbc_cboR1A3);
-		
-		cboR1A2 = new JComboBox<RuleActionItem>();
-		cboR1A2.setModel(new DefaultComboBoxModel<RuleActionItem>(RuleActionItem.getActions(1)));
-		GridBagConstraints gbc_cboR1A2 = new GridBagConstraints();
-		gbc_cboR1A2.insets = new Insets(0, 0, 5, 0);
-		gbc_cboR1A2.fill = GridBagConstraints.HORIZONTAL;
-		gbc_cboR1A2.gridx = 1;
-		gbc_cboR1A2.gridy = 3;
-		panel_6.add(cboR1A2, gbc_cboR1A2);
-		
-		cboR1A1 = new JComboBox<RuleActionItem>();
-		cboR1A1.setModel(new DefaultComboBoxModel<RuleActionItem>(RuleActionItem.getActions(1)));
-		GridBagConstraints gbc_cboR1A1 = new GridBagConstraints();
-		gbc_cboR1A1.insets = new Insets(0, 0, 5, 0);
-		gbc_cboR1A1.fill = GridBagConstraints.HORIZONTAL;
-		gbc_cboR1A1.gridx = 1;
-		gbc_cboR1A1.gridy = 2;
-		panel_6.add(cboR1A1, gbc_cboR1A1);
-		
 		cboR1Obs = new JComboBox<RuleActionItem>();
-		cboR1Obs.setModel(new DefaultComboBoxModel<RuleActionItem>(RuleActionItem.getObstacleStates(1)));
-		GridBagConstraints gbc_cboR1Obs = new GridBagConstraints();
-		gbc_cboR1Obs.insets = new Insets(0, 0, 5, 0);
-		gbc_cboR1Obs.fill = GridBagConstraints.BOTH;
-		gbc_cboR1Obs.gridx = 1;
-		gbc_cboR1Obs.gridy = 1;
-		panel_6.add(cboR1Obs, gbc_cboR1Obs);
-		
-		JPanel panel_11 = new JPanel();
-		tabbedPane_1.addTab("Rule 2", null, panel_11, null);
-		panel_11.setBackground(new Color(220, 220, 220));
-		GridBagLayout gbl_panel_11 = new GridBagLayout();
-		gbl_panel_11.columnWidths = new int[]{128, 128, 0};
-		gbl_panel_11.rowHeights = new int[]{27, 0, 0, 0, 0, 0};
-		gbl_panel_11.columnWeights = new double[]{1.0, 1.0, Double.MIN_VALUE};
-		gbl_panel_11.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
-		panel_11.setLayout(gbl_panel_11);
-		
-		JLabel label_5 = new JLabel("Do rule");
-		GridBagConstraints gbc_label_5 = new GridBagConstraints();
-		gbc_label_5.anchor = GridBagConstraints.EAST;
-		gbc_label_5.insets = new Insets(0, 0, 5, 5);
-		gbc_label_5.gridx = 0;
-		gbc_label_5.gridy = 0;
-		panel_11.add(label_5, gbc_label_5);
+		cboR1Type = new JComboBox<BeliefItem>();
+		cboR1A1 = new JComboBox<RuleActionItem>();
+		cboR1A2 = new JComboBox<RuleActionItem>();
+		cboR1A3 = new JComboBox<RuleActionItem>();
+		tabbedPane_1.addTab("Rule 1", null, RulePanel.createRulePanel(1, chkR1, cboR1Obs, cboR1Type, cboR1A1, cboR1A2, cboR1A3), null);
 		
 		chkR2 = new JCheckBox("");
-		GridBagConstraints gbc_chkR2 = new GridBagConstraints();
-		gbc_chkR2.fill = GridBagConstraints.BOTH;
-		gbc_chkR2.insets = new Insets(0, 0, 5, 0);
-		gbc_chkR2.gridx = 1;
-		gbc_chkR2.gridy = 0;
-		panel_11.add(chkR2, gbc_chkR2);
-		
-		JLabel label_6 = new JLabel("If an obstacle has");
-		GridBagConstraints gbc_label_6 = new GridBagConstraints();
-		gbc_label_6.anchor = GridBagConstraints.EAST;
-		gbc_label_6.insets = new Insets(0, 0, 5, 5);
-		gbc_label_6.gridx = 0;
-		gbc_label_6.gridy = 1;
-		panel_11.add(label_6, gbc_label_6);
-		
 		cboR2Obs = new JComboBox<RuleActionItem>();
-		cboR2Obs.setModel(new DefaultComboBoxModel<RuleActionItem>(RuleActionItem.getObstacleStates(2)));
-		GridBagConstraints gbc_cboR2Obs = new GridBagConstraints();
-		gbc_cboR2Obs.fill = GridBagConstraints.BOTH;
-		gbc_cboR2Obs.insets = new Insets(0, 0, 5, 0);
-		gbc_cboR2Obs.gridx = 1;
-		gbc_cboR2Obs.gridy = 1;
-		panel_11.add(cboR2Obs, gbc_cboR2Obs);
-		
-		JLabel label_7 = new JLabel("then do");
-		GridBagConstraints gbc_label_7 = new GridBagConstraints();
-		gbc_label_7.anchor = GridBagConstraints.EAST;
-		gbc_label_7.insets = new Insets(0, 0, 5, 5);
-		gbc_label_7.gridx = 0;
-		gbc_label_7.gridy = 2;
-		panel_11.add(label_7, gbc_label_7);
-		
+		cboR2Type = new JComboBox<BeliefItem>();
 		cboR2A1 = new JComboBox<RuleActionItem>();
-		cboR2A1.setModel(new DefaultComboBoxModel<RuleActionItem>(RuleActionItem.getActions(2)));
-		GridBagConstraints gbc_cboR2A1 = new GridBagConstraints();
-		gbc_cboR2A1.fill = GridBagConstraints.HORIZONTAL;
-		gbc_cboR2A1.insets = new Insets(0, 0, 5, 0);
-		gbc_cboR2A1.gridx = 1;
-		gbc_cboR2A1.gridy = 2;
-		panel_11.add(cboR2A1, gbc_cboR2A1);
-		
-		JLabel label_8 = new JLabel("then");
-		GridBagConstraints gbc_label_8 = new GridBagConstraints();
-		gbc_label_8.anchor = GridBagConstraints.EAST;
-		gbc_label_8.insets = new Insets(0, 0, 5, 5);
-		gbc_label_8.gridx = 0;
-		gbc_label_8.gridy = 3;
-		panel_11.add(label_8, gbc_label_8);
-		
 		cboR2A2 = new JComboBox<RuleActionItem>();
-		cboR2A2.setModel(new DefaultComboBoxModel<RuleActionItem>(RuleActionItem.getActions(2)));
-		GridBagConstraints gbc_cboR2A2 = new GridBagConstraints();
-		gbc_cboR2A2.fill = GridBagConstraints.HORIZONTAL;
-		gbc_cboR2A2.insets = new Insets(0, 0, 5, 0);
-		gbc_cboR2A2.gridx = 1;
-		gbc_cboR2A2.gridy = 3;
-		panel_11.add(cboR2A2, gbc_cboR2A2);
-		
-		JLabel label_9 = new JLabel("then");
-		GridBagConstraints gbc_label_9 = new GridBagConstraints();
-		gbc_label_9.anchor = GridBagConstraints.EAST;
-		gbc_label_9.insets = new Insets(0, 0, 0, 5);
-		gbc_label_9.gridx = 0;
-		gbc_label_9.gridy = 4;
-		panel_11.add(label_9, gbc_label_9);
-		
 		cboR2A3 = new JComboBox<RuleActionItem>();
-		cboR2A3.setModel(new DefaultComboBoxModel<RuleActionItem>(RuleActionItem.getActions(2)));
-		GridBagConstraints gbc_cboR2A3 = new GridBagConstraints();
-		gbc_cboR2A3.fill = GridBagConstraints.HORIZONTAL;
-		gbc_cboR2A3.gridx = 1;
-		gbc_cboR2A3.gridy = 4;
-		panel_11.add(cboR2A3, gbc_cboR2A3);
-		
-		JPanel panel_10 = new JPanel();
-		panel_10.setBackground(new Color(220, 220, 220));
-		tabbedPane_1.addTab("Rule 3", null, panel_10, null);
-		GridBagLayout gbl_panel_10 = new GridBagLayout();
-		gbl_panel_10.columnWidths = new int[]{128, 128, 0};
-		gbl_panel_10.rowHeights = new int[]{27, 0, 0, 0, 0, 0};
-		gbl_panel_10.columnWeights = new double[]{1.0, 1.0, Double.MIN_VALUE};
-		gbl_panel_10.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
-		panel_10.setLayout(gbl_panel_10);
-		
-		JLabel label = new JLabel("Do rule");
-		GridBagConstraints gbc_label = new GridBagConstraints();
-		gbc_label.anchor = GridBagConstraints.EAST;
-		gbc_label.insets = new Insets(0, 0, 5, 5);
-		gbc_label.gridx = 0;
-		gbc_label.gridy = 0;
-		panel_10.add(label, gbc_label);
+		tabbedPane_1.addTab("Rule 2", null, RulePanel.createRulePanel(2, chkR2, cboR2Obs, cboR2Type, cboR2A1, cboR2A2, cboR2A3), null);
 		
 		chkR3 = new JCheckBox("");
-		GridBagConstraints gbc_chkR3 = new GridBagConstraints();
-		gbc_chkR3.fill = GridBagConstraints.BOTH;
-		gbc_chkR3.insets = new Insets(0, 0, 5, 0);
-		gbc_chkR3.gridx = 1;
-		gbc_chkR3.gridy = 0;
-		panel_10.add(chkR3, gbc_chkR3);
-		
-		JLabel label_1 = new JLabel("If an obstacle has");
-		GridBagConstraints gbc_label_1 = new GridBagConstraints();
-		gbc_label_1.anchor = GridBagConstraints.EAST;
-		gbc_label_1.insets = new Insets(0, 0, 5, 5);
-		gbc_label_1.gridx = 0;
-		gbc_label_1.gridy = 1;
-		panel_10.add(label_1, gbc_label_1);
-		
 		cboR3Obs = new JComboBox<RuleActionItem>();
-		cboR3Obs.setModel(new DefaultComboBoxModel<RuleActionItem>(RuleActionItem.getObstacleStates(3)));
-		GridBagConstraints gbc_cboR3Obs = new GridBagConstraints();
-		gbc_cboR3Obs.fill = GridBagConstraints.BOTH;
-		gbc_cboR3Obs.insets = new Insets(0, 0, 5, 0);
-		gbc_cboR3Obs.gridx = 1;
-		gbc_cboR3Obs.gridy = 1;
-		panel_10.add(cboR3Obs, gbc_cboR3Obs);
-		
-		JLabel label_2 = new JLabel("then do");
-		GridBagConstraints gbc_label_2 = new GridBagConstraints();
-		gbc_label_2.anchor = GridBagConstraints.EAST;
-		gbc_label_2.insets = new Insets(0, 0, 5, 5);
-		gbc_label_2.gridx = 0;
-		gbc_label_2.gridy = 2;
-		panel_10.add(label_2, gbc_label_2);
-		
+		cboR3Type = new JComboBox<BeliefItem>();
 		cboR3A1 = new JComboBox<RuleActionItem>();
-		cboR3A1.setModel(new DefaultComboBoxModel<RuleActionItem>(RuleActionItem.getActions(3)));
-		GridBagConstraints gbc_cboR3A1 = new GridBagConstraints();
-		gbc_cboR3A1.fill = GridBagConstraints.HORIZONTAL;
-		gbc_cboR3A1.insets = new Insets(0, 0, 5, 0);
-		gbc_cboR3A1.gridx = 1;
-		gbc_cboR3A1.gridy = 2;
-		panel_10.add(cboR3A1, gbc_cboR3A1);
-		
-		JLabel label_3 = new JLabel("then");
-		GridBagConstraints gbc_label_3 = new GridBagConstraints();
-		gbc_label_3.anchor = GridBagConstraints.EAST;
-		gbc_label_3.insets = new Insets(0, 0, 5, 5);
-		gbc_label_3.gridx = 0;
-		gbc_label_3.gridy = 3;
-		panel_10.add(label_3, gbc_label_3);
-		
 		cboR3A2 = new JComboBox<RuleActionItem>();
-		cboR3A2.setModel(new DefaultComboBoxModel<RuleActionItem>(RuleActionItem.getActions(3)));
-		GridBagConstraints gbc_cboR3A2 = new GridBagConstraints();
-		gbc_cboR3A2.fill = GridBagConstraints.HORIZONTAL;
-		gbc_cboR3A2.insets = new Insets(0, 0, 5, 0);
-		gbc_cboR3A2.gridx = 1;
-		gbc_cboR3A2.gridy = 3;
-		panel_10.add(cboR3A2, gbc_cboR3A2);
-		
-		JLabel label_4 = new JLabel("then");
-		GridBagConstraints gbc_label_4 = new GridBagConstraints();
-		gbc_label_4.anchor = GridBagConstraints.EAST;
-		gbc_label_4.insets = new Insets(0, 0, 0, 5);
-		gbc_label_4.gridx = 0;
-		gbc_label_4.gridy = 4;
-		panel_10.add(label_4, gbc_label_4);
-		
 		cboR3A3 = new JComboBox<RuleActionItem>();
-		cboR3A3.setModel(new DefaultComboBoxModel<RuleActionItem>(RuleActionItem.getActions(3)));
-		GridBagConstraints gbc_cboR3A3 = new GridBagConstraints();
-		gbc_cboR3A3.fill = GridBagConstraints.HORIZONTAL;
-		gbc_cboR3A3.gridx = 1;
-		gbc_cboR3A3.gridy = 4;
-		panel_10.add(cboR3A3, gbc_cboR3A3);
+		tabbedPane_1.addTab("Rule 3", null, RulePanel.createRulePanel(3, chkR3, cboR3Obs, cboR3Type, cboR3A1, cboR3A2, cboR3A3), null);
+		
+		chkR4 = new JCheckBox("");
+		cboR4Obs = new JComboBox<RuleActionItem>();
+		cboR4Type = new JComboBox<BeliefItem>();
+		cboR4A1 = new JComboBox<RuleActionItem>();
+		cboR4A2 = new JComboBox<RuleActionItem>();
+		cboR4A3 = new JComboBox<RuleActionItem>();
+		tabbedPane_1.addTab("Rule 4", null, RulePanel.createRulePanel(4, chkR4, cboR4Obs, cboR4Type, cboR4A1, cboR4A2, cboR4A3), null);
 		
 	}
 	
