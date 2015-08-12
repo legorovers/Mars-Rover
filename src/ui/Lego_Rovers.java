@@ -53,7 +53,7 @@ import java.awt.event.ItemListener;
 import java.awt.event.ActionEvent;
 import javax.swing.JProgressBar;
 
-public class Mars_Rover 
+public class Lego_Rovers 
 {
 	class ActionButton implements ActionListener
 	{
@@ -200,7 +200,7 @@ public class Mars_Rover
 			public void run() {
 				try {
 					System.setProperty("com.apple.mrj.application.apple.menu.about.name", "Mars Rover");
-					Mars_Rover window = new Mars_Rover();
+					Lego_Rovers window = new Lego_Rovers();
 					window.frmMarsRover.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -212,7 +212,7 @@ public class Mars_Rover
 	/**
 	 * Create the application.
 	 */
-	public Mars_Rover() {
+	public Lego_Rovers() {
 		initialize();
 	}
 	
@@ -329,7 +329,7 @@ public class Mars_Rover
 		
 		
 		try {
-			imgIcon = ImageIO.read(Mars_Rover.class.getClass().getResourceAsStream("/logo.png"));
+			imgIcon = ImageIO.read(Lego_Rovers.class.getClass().getResourceAsStream("/logo.png"));
 			
 		} catch (IOException e) {
 			imgIcon = new BufferedImage(0, 0, 0);
@@ -338,7 +338,7 @@ public class Mars_Rover
 		}
 		frmMarsRover.setIconImage(imgIcon);
 		frmMarsRover.setResizable(false);
-		frmMarsRover.setTitle("Mars Rover");
+		frmMarsRover.setTitle("Lego Rovers");
 		frmMarsRover.setMinimumSize(new Dimension(800, 600));
 		frmMarsRover.setBounds(100, 100, 800, 600);
 		frmMarsRover.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -856,7 +856,7 @@ public class Mars_Rover
 		gbl_panel_12.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
 		panel_12.setLayout(gbl_panel_12);
 		
-		JImage pnlLivLogo = new JImage(Mars_Rover.class.getClass().getResourceAsStream("/uol.png"), new Dimension(-1, 150));
+		JImage pnlLivLogo = new JImage(Lego_Rovers.class.getClass().getResourceAsStream("/uol.png"), new Dimension(-1, 150));
 		pnlLivLogo.setBackground(new Color(229, 229, 229));
 		GridBagConstraints gbc_pnlLivLogo = new GridBagConstraints();
 		gbc_pnlLivLogo.gridwidth = 2;
@@ -871,14 +871,14 @@ public class Mars_Rover
 		gbc_lblCreated.gridy = 1;
 		panel_12.add(lblCreated, gbc_lblCreated);
 		
-		JImage pnlCARLiv = new JImage(Mars_Rover.class.getClass().getResourceAsStream("/uol.png"), new Dimension(-1, 100));
+		JImage pnlCARLiv = new JImage(Lego_Rovers.class.getClass().getResourceAsStream("/uol.png"), new Dimension(-1, 100));
 		pnlCARLiv.setBackground(new Color(229, 229, 229));
 		GridBagConstraints gbc_pnlCARLiv = new GridBagConstraints();
 		gbc_pnlCARLiv.gridx = 0;
 		gbc_pnlCARLiv.gridy = 2;
 		panel_12.add(pnlCARLiv, gbc_pnlCARLiv);
 		
-		JImage pnlCAR = new JImage(Mars_Rover.class.getClass().getResourceAsStream("/autonomous.png"), new Dimension(-1, 40));
+		JImage pnlCAR = new JImage(Lego_Rovers.class.getClass().getResourceAsStream("/autonomous.png"), new Dimension(-1, 40));
 		pnlCAR.setBackground(new Color(229, 229, 229));
 		GridBagConstraints gbc_pnlCAR = new GridBagConstraints();
 		gbc_pnlCAR.gridx = 1;
@@ -892,7 +892,7 @@ public class Mars_Rover
 		gbc_lblSupported.gridy = 3;
 		panel_12.add(lblSupported, gbc_lblSupported);
 		
-		JImage pnlSTFC = new JImage(Mars_Rover.class.getClass().getResourceAsStream("/stfc.png"), new Dimension(-1, 100));
+		JImage pnlSTFC = new JImage(Lego_Rovers.class.getClass().getResourceAsStream("/stfc.png"), new Dimension(-1, 100));
 		pnlSTFC.setBackground(new Color(17, 57, 101));
 		GridBagConstraints gbc_pnlSTFC = new GridBagConstraints();
 		gbc_pnlSTFC.gridwidth = 2;
