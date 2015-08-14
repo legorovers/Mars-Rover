@@ -121,7 +121,7 @@ public class Lego_Rovers
 	
 	private JFrame frmMarsRover;
 	private BufferedImage imgIcon;
-	private BluetoothRobot btRobot;
+	private static BluetoothRobot btRobot;
 	
 	private Thread robotThread;
 	
@@ -204,6 +204,12 @@ public class Lego_Rovers
 					window.frmMarsRover.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
+				}
+				
+				btRobot.disconnect();
+				while (btRobot.connectionStatus() != ConnectStatus.DISCONNECTED)
+				{
+					System.out.println("Waiting for robot to disconnect");
 				}
 			}
 		});
@@ -315,17 +321,6 @@ public class Lego_Rovers
 		robotThread = new Thread(btRobot);
 				
 		frmMarsRover = new JFrame();
-		Runtime.getRuntime().addShutdownHook(new Thread(){
-			@Override
-			public void run()
-			{
-				btRobot.disconnect();
-				while (btRobot.connectionStatus() != ConnectStatus.DISCONNECTED)
-				{
-					System.out.println("Waiting for robot to disconnect");
-				}
-			}
-		});
 		
 		
 		try {
