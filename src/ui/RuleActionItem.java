@@ -2,6 +2,10 @@ package ui;
 
 import ev3.BluetoothRobot.RobotAction;
 
+/*
+ * Creates items for the robot action combobox and the Appeared, Disappeared combobox.
+ * This also stores the relevant data for that item. 
+ */
 public class RuleActionItem 
 {
 	private RobotAction action;

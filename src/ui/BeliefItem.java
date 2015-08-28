@@ -2,7 +2,10 @@ package ui;
 
 import ev3.BluetoothRobot.BeliefStates;
 
-
+/*
+ * Creates the items in the Belief Combobox and stores the object data needed
+ * to pass to the bluetooth thread
+ */
 public class BeliefItem
 {	
 	private String title;

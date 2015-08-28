@@ -11,6 +11,9 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+/*
+ * Creates a JPanel for a rule
+ */
 public class RulePanel 
 {
 	public static JPanel createRulePanel(int i, JCheckBox chkRule, JComboBox<RuleActionItem> cboObs, JComboBox<BeliefItem> cboType, 

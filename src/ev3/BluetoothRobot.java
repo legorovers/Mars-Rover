@@ -6,6 +6,8 @@ import java.util.Random;
 import java.util.concurrent.LinkedBlockingDeque;
 
 /**
+ * Manages the EV3 Connection
+ * 
  * Created by joecollenette on 02/07/2015.
  */
 public abstract class BluetoothRobot implements Runnable
@@ -284,8 +286,10 @@ public abstract class BluetoothRobot implements Runnable
 				}
 				if (doActions)
 				{
+					//Check the rules in reverse order so they are placed in queue in order.
 					for (int j = rule.actions.length - 1; j >= 0; j--)
 					{
+						//Remove the delay on the action.
 						actions.addFirst(new TimedAction(rule.getAction(j), System.currentTimeMillis() + delay));
 					}
 				}
@@ -430,6 +434,7 @@ public abstract class BluetoothRobot implements Runnable
     {
         try
         {
+        	//Connect
 			generatedException = null;
 			status = ConnectStatus.CONNECTING;
 			robot.connectToRobot(btAddress);
@@ -442,17 +447,20 @@ public abstract class BluetoothRobot implements Runnable
 			int blue;
 			int green;
 			
+			//While connected and no disconnect signalled
 			while (status == ConnectStatus.CONNECTED)
 			{
+				//Update Beliefs
 				disInput = robot.getuSensor().getSample();
 				rgb = robot.getRGBSensor().getRGBSample();
-				//Log.w("Colour Values", "R - " + (int) (rgb[0] * 850) + " G - " + (int) (rgb[1] * 1026) + " B - " + (int) (rgb[2] * 1815));
 				red = Math.min(255, (int)(rgb[0] * 850));
 				green = Math.min(255, (int)(rgb[1] * 1026));
 				blue = Math.min(255, (int)(rgb[2] * 1815));
 				state.colour = new Color(red, green, blue);
 				state.distance = disInput;
 				updateBeliefs(disInput, state.colour);
+				
+				//Update Speed and check if actions are needed
 				if (curSpeed != speed)
 				{
 					robot.setTravelSpeed(speed);
@@ -474,9 +482,10 @@ public abstract class BluetoothRobot implements Runnable
 						doWater();
 						break;
 				}
-				update(state);
+				
 			}
-			robot.close();
+			//Disconnect
+			robot.close();	    	
 			status = ConnectStatus.DISCONNECTED;
 			state.states.clear();
 			state.colour = Color.BLACK;
@@ -493,7 +502,7 @@ public abstract class BluetoothRobot implements Runnable
 			status = ConnectStatus.DISCONNECTED;
 			error();
             generatedException = e;
-            System.out.println(e.getLocalizedMessage());
+            e.printStackTrace();
         }
     }
 
@@ -620,6 +629,11 @@ public abstract class BluetoothRobot implements Runnable
 		return state.colour;
 	}
 	
+	/* Change from android version due to threading issues
+	 *  
+	 * These events are called instead of having methods. 
+	 */
+	
 	public abstract void update(BeliefSet state);
 	
 	public abstract void updateTimeTil(long time);
@@ -628,5 +642,7 @@ public abstract class BluetoothRobot implements Runnable
 	
 	public abstract void disconnected();
 	
+	//Error connecting is the most usual cause
 	public abstract void error();
+	
 }

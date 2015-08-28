@@ -1,5 +1,8 @@
 package ui;
 
+/*
+ * Creates the items for the delay combobox and stored how long the delay is
+ */
 public class IntItem
 {
 	private String name;

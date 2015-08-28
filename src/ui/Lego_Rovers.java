@@ -27,6 +27,7 @@ import java.awt.GridBagLayout;
 import java.awt.Image;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
+import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.text.DecimalFormat;
@@ -53,6 +54,9 @@ import java.awt.event.ItemListener;
 import java.awt.event.ActionEvent;
 import javax.swing.JProgressBar;
 
+/*
+ * Main Thread for Lego Rovers, Manages UI and the events, as well as the Bluetooth Thread Creation
+ */
 public class Lego_Rovers 
 {
 	class ActionButton implements ActionListener
@@ -117,7 +121,6 @@ public class Lego_Rovers
 			JOptionPane.showMessageDialog(frmMarsRover, "Settings Changed", "Mars Rover", JOptionPane.INFORMATION_MESSAGE, new ImageIcon(imgIcon.getScaledInstance(50, 50, Image.SCALE_SMOOTH)));
 		}
 	}
-
 	
 	private JFrame frmMarsRover;
 	private BufferedImage imgIcon;
@@ -335,7 +338,9 @@ public class Lego_Rovers
 		frmMarsRover.setResizable(false);
 		frmMarsRover.setTitle("Lego Rovers");
 		frmMarsRover.setMinimumSize(new Dimension(800, 600));
-		frmMarsRover.setBounds(100, 100, 800, 600);
+		int startX = (Toolkit.getDefaultToolkit().getScreenSize().width / 2) - 400;
+		int startY = (Toolkit.getDefaultToolkit().getScreenSize().height / 2) - 300; 
+		frmMarsRover.setBounds(startX, startY, 800, 600);
 		frmMarsRover.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frmMarsRover.getContentPane().setLayout(new BorderLayout(0, 0));
 		
@@ -908,6 +913,7 @@ public class Lego_Rovers
 	public void setUpBottomPanel()
 	{
 		JPanel panel = new JPanel();
+		
 		panel.setBorder(new BevelBorder(BevelBorder.RAISED, null, null, null, null));
 		FlowLayout flowLayout = (FlowLayout) panel.getLayout();
 		flowLayout.setAlignment(FlowLayout.LEFT);
@@ -940,7 +946,8 @@ public class Lego_Rovers
 		panel.add(separator_1);
 		
 		lblBeliefs = new JLabel("Beliefs - []");
-		panel.add(lblBeliefs);	
+		panel.add(lblBeliefs);
+		
 	}
 
 }

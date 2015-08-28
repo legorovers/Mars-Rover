@@ -10,6 +10,10 @@ import java.io.InputStream;
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 
+/*
+ * JPanel which sets a image for the background 
+ * 
+ */
 public class JImage extends JPanel 
 {
 	private static final long serialVersionUID = -1667467354112273118L;
